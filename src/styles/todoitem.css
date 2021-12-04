@@ -1,0 +1,9 @@
+.todoitem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem;
+  border-bottom: 1px solid #ccc;
+  cursor: default;
+}

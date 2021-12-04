@@ -1,0 +1,13 @@
+.navbar {
+  display: flex;
+  width: 100vw;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.linkbox {
+  display: flex;
+  justify-content: space-evenly;
+  width: 35%;
+  align-items: center;
+}
