@@ -57,3 +57,9 @@ export const useSizeStore = create((set) => ({
   size: "1000px",
   setSize: (size) => set((state) => ({ size })),
 }));
+
+export const useLoadingStore = create((set) => ({
+  loading: false,
+  turnOnLoading: () => set((state) => ({ loading: true })),
+  turnOffLoading: () => set((state) => ({ loading: false })),
+}));

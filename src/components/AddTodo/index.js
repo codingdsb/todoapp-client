@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { Input, Button, HStack, useToast } from "@chakra-ui/react";
 import axios from "axios";
-import { useUserStore, useSizeStore } from "../../stores";
+import { useUserStore, useSizeStore, useLoadingStore } from "../../stores";
 
 const AddTodo = () => {
   const [value, setValue] = useState("");
 
   const { addUserTodo } = useUserStore((state) => state);
   const { size } = useSizeStore((state) => state);
+  const { turnOnLoading, turnOffLoading } = useLoadingStore((state) => state);
   const toast = useToast();
 
   const addTodo = () => {
+    turnOnLoading();
     axios
       .request({
         method: "post",
@@ -24,6 +26,7 @@ const AddTodo = () => {
       })
       .then((res) => {
         addUserTodo(res.data.todo);
+        turnOffLoading();
         toast({
           title: "Success",
           description: res.data.message,
@@ -33,6 +36,7 @@ const AddTodo = () => {
         });
       })
       .catch((err) => {
+        turnOffLoading();
         toast({
           title: "Error",
           description: err.response.data.message,

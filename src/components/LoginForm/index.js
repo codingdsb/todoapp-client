@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { useModalStore, useUserStore } from "../../stores";
+import { useModalStore, useUserStore, useLoadingStore } from "../../stores";
 
 const LoginForm = () => {
   const [data, setData] = useState({
@@ -23,9 +23,11 @@ const LoginForm = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const { setUser } = useUserStore((state) => state);
   const { closeLoginModal } = useModalStore((state) => state);
+  const { turnOnLoading, turnOffLoading } = useLoadingStore((state) => state);
 
   const login = (e) => {
     e.preventDefault();
+    turnOnLoading();
     axios
       .request({
         method: "post",
@@ -38,6 +40,7 @@ const LoginForm = () => {
       .then((res) => {
         localStorage.setItem("token", res.data.token);
         setUser(res.data.user);
+        turnOffLoading();
         toast({
           title: `Welcome ${res.data.user.username}`,
           description: "You have successfully logged in",
@@ -48,6 +51,7 @@ const LoginForm = () => {
         closeLoginModal();
       })
       .catch((err) => {
+        turnOffLoading();
         toast({
           title: "Error",
           description: err.response.data.error,

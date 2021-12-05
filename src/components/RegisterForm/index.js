@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import axios from "axios";
-import { useModalStore, useUserStore } from "../../stores";
+import { useModalStore, useUserStore, useLoadingStore } from "../../stores";
 
 const RegisterForm = () => {
   const [data, setData] = useState({
@@ -24,10 +24,12 @@ const RegisterForm = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const toast = useToast();
   const { closeRegisterModal } = useModalStore((state) => state);
-  const { user, setUser } = useUserStore((state) => state);
+  const { setUser } = useUserStore((state) => state);
+  const { turnOnLoading, turnOffLoading } = useLoadingStore((state) => state);
 
   const register = (e) => {
     e.preventDefault();
+    turnOnLoading();
     axios
       .request({
         method: "POST",
@@ -36,6 +38,7 @@ const RegisterForm = () => {
       })
       .then((res) => {
         window.location.href = "/";
+        turnOffLoading();
         toast({
           title: `Welcome ${res.data.user.username}`,
           description: res.data.message,
@@ -48,6 +51,7 @@ const RegisterForm = () => {
         closeRegisterModal();
       })
       .catch((err) => {
+        turnOffLoading();
         toast({
           title: `Error`,
           description: err.response.data.error,

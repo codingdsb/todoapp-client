@@ -16,16 +16,18 @@ import {
   AiOutlineClose,
 } from "react-icons/ai";
 import axios from "axios";
-import { useUserStore, useSizeStore } from "../../stores";
+import { useUserStore, useSizeStore, useLoadingStore } from "../../stores";
 
 const TodoItem = ({ todoitem }) => {
   const { deleteUserTodo, editUserTodo } = useUserStore((state) => state);
   const { size } = useSizeStore((state) => state);
+  const { turnOnLoading, turnOffLoading } = useLoadingStore((state) => state);
   const toast = useToast();
   const [editMode, setEditMode] = useState(false);
   const [new_text, setNewText] = useState(todoitem.text);
 
   const deleteItem = () => {
+    turnOnLoading();
     axios
       .request({
         method: "delete",
@@ -38,6 +40,8 @@ const TodoItem = ({ todoitem }) => {
         },
       })
       .then((res) => {
+        deleteUserTodo(todoitem._id);
+        turnOffLoading();
         toast({
           title: "Success",
           description: res.data.message,
@@ -45,11 +49,9 @@ const TodoItem = ({ todoitem }) => {
           duration: 9000,
           isClosable: true,
         });
-
-        deleteUserTodo(todoitem._id);
       })
       .catch((err) => {
-        console.log(err);
+        turnOffLoading();
         toast({
           title: "Error",
           description: err.response.data.message,
@@ -61,6 +63,7 @@ const TodoItem = ({ todoitem }) => {
   };
 
   const editItem = () => {
+    turnOnLoading();
     axios
       .request({
         method: "put",
@@ -76,6 +79,8 @@ const TodoItem = ({ todoitem }) => {
         },
       })
       .then((res) => {
+        editUserTodo(todoitem._id, new_text);
+        turnOffLoading();
         toast({
           title: "Success",
           description: res.data.message,
@@ -84,10 +89,9 @@ const TodoItem = ({ todoitem }) => {
           isClosable: true,
         });
         setEditMode(false);
-        editUserTodo(todoitem._id, new_text);
       })
       .catch((err) => {
-        console.log(err);
+        turnOffLoading();
         toast({
           title: "Error",
           description: err.response.data.message,
